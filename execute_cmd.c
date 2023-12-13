@@ -19,14 +19,12 @@ void execute_command(char **token, char *sh, char **env)
 	if (ch_pid == -1)
 	{
 		perror(sh);
-		exit(EXIT_FAILURE);
 	}
 	else if (ch_pid == 0)
 	{
 		if (execve(argv[0], argv, env) == -1)
 		{
 			perror(sh);
-			exit(EXIT_FAILURE);
 		}
 	}
 	else

@@ -20,6 +20,7 @@ int main(int ac, char **av, char **env)
 		}
 		cmd = display_prompt(&cmd, av[ac - 1]);
 		execute_command(&cmd, av[ac - 1], env);
+		free(cmd);
 	}
 	exit(EXIT_SUCCESS);
 	return (0);
@@ -41,6 +42,7 @@ char *display_prompt(char **cmd, char *sh)
 	msg = gt_line(cmd, &bufsize, sh);
 	if (msg == -1)
 	{
+		free(cmd);
 		if (feof(stdin))
 		{
 			print_out("\n");
@@ -48,7 +50,7 @@ char *display_prompt(char **cmd, char *sh)
 		}
 		else
 		{
-			print_out("Error while reading input");
+			perror(sh);
 			exit(EXIT_FAILURE);
 		}
 	}
