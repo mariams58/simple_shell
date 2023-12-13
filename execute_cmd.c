@@ -6,7 +6,7 @@
   * @env: environmental variables
   *
   */
-void execute_command(char **token, char *sh, char **env)
+int execute_command(char **token, char *sh, char **env)
 {
 	pid_t ch_pid;
 	int status;
@@ -25,10 +25,12 @@ void execute_command(char **token, char *sh, char **env)
 		if (execve(argv[0], argv, env) == -1)
 		{
 			perror(sh);
+			return (-1);
 		}
 	}
 	else
 	{
 		wait(&status);
 	}
+	return (0);
 }

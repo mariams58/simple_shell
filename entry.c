@@ -15,13 +15,13 @@ int main(int ac, char **av, char **env)
 	{
 		while ((isatty(STDIN_FILENO) == 1))
 		{	print_out("($) ");
-			cmd = display_prompt(&cmd, av[ac - 1]);
+			display_prompt(&cmd, av[ac - 1]);
 			execute_command(&cmd, av[ac - 1], env);
 		}
-		cmd = display_prompt(&cmd, av[ac - 1]);
+		display_prompt(&cmd, av[ac - 1]);
 		execute_command(&cmd, av[ac - 1], env);
-		free(cmd);
 	}
+	free(cmd);
 	exit(EXIT_SUCCESS);
 	return (0);
 
@@ -42,17 +42,8 @@ char *display_prompt(char **cmd, char *sh)
 	msg = gt_line(cmd, &bufsize, sh);
 	if (msg == -1)
 	{
-		free(cmd);
-		if (feof(stdin))
-		{
-			print_out("\n");
-			exit(EXIT_SUCCESS);
-		}
-		else
-		{
-			perror(sh);
-			exit(EXIT_FAILURE);
-		}
+		perror(sh);
+		exit(EXIT_FAILURE);
 	}
 	return (*cmd);
 }
@@ -69,6 +60,11 @@ void run_nshell(char **cmd, char **env)
 
 	if (cmd[0] != NULL)
 	{
+ 		if (feof(stdin))
+		{
+			print_out("\n");
+			_exit(EXIT_SUCCESS);
+		}
 		if (execve(cmd[0], cmd, env) == -1)
 		{
 			perror(cmd[0]);
