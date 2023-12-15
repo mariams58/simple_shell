@@ -5,16 +5,13 @@
   * @sh: name of program
   * @env: environmental variables
   *
+  * Return: int value
   */
 int execute_command(char **token, char *sh, char **env)
 {
 	pid_t ch_pid;
 	int status;
-	char *str = token[0];
-	char *argv[2];
 
-	argv[0] = str;
-	argv[1] = NULL;
 	ch_pid = fork();
 	if (ch_pid == -1)
 	{
@@ -22,7 +19,7 @@ int execute_command(char **token, char *sh, char **env)
 	}
 	else if (ch_pid == 0)
 	{
-		if (execve(argv[0], argv, env) == -1)
+		if (execve(token[0], token, env) == -1)
 		{
 			perror(sh);
 			return (-1);

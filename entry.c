@@ -9,17 +9,30 @@
   */
 int main(int ac, char **av, char **env)
 {
-	char *cmd = NULL;
+	char *cmd = NULL, *token[10];
+	ssize_t rd;
+	int i;
 
 	if (ac)
 	{
 		while ((isatty(STDIN_FILENO) == 1))
-		{	print_out("($) ");
-			display_prompt(&cmd, av[ac - 1]);
-			execute_command(&cmd, av[ac - 1], env);
+		{
+			print_out("($ ");
+			rd = display_prompt(&cmd, av[ac - 1]);
+			if (rd != -1)
+			{
+				get_tokens(cmd, token);
+				i = execute_command(token, av[ac - 1], env);
+				if (i == -1)
+				{
+					free(cmd);
+					exit(EXIT_FAILURE);
+				}
+			}
 		}
 		display_prompt(&cmd, av[ac - 1]);
-		execute_command(&cmd, av[ac - 1], env);
+		get_tokens(cmd, token);
+		execute_command(token, av[ac - 1], env);
 	}
 	free(cmd);
 	exit(EXIT_SUCCESS);
@@ -34,18 +47,17 @@ int main(int ac, char **av, char **env)
   *
   * Return: pinter to cmommand string
   */
-char *display_prompt(char **cmd, char *sh)
+ssize_t display_prompt(char **cmd, char *sh)
 {
 	size_t  bufsize = 0;
 	ssize_t msg;
 
 	msg = gt_line(cmd, &bufsize, sh);
+	if (msg == 0 || (*cmd)[msg] == '\n')
+		(*cmd)[msg] = '\0';
 	if (msg == -1)
-	{
 		perror(sh);
-		exit(EXIT_FAILURE);
-	}
-	return (*cmd);
+	return (msg);
 }
 
 /**
@@ -60,7 +72,7 @@ void run_nshell(char **cmd, char **env)
 
 	if (cmd[0] != NULL)
 	{
- 		if (feof(stdin))
+		if (feof(stdin))
 		{
 			print_out("\n");
 			_exit(EXIT_SUCCESS);

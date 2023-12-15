@@ -47,3 +47,26 @@ int print_out(char *str)
 	return (write(STDOUT_FILENO, str, strlen(str)));
 }
 
+/**
+  * get_tokens - tokenisez the cmd line from user
+  * @cmd: pointer to command string
+  * @args: argument array
+  *
+  * Return: an array of string
+  */
+int get_tokens(char *cmd, char **args)
+{
+	char *token = NULL;
+	int x = 0;
+
+	if (cmd != NULL)
+		token = strtok(cmd, " \n\t\v");
+	while (token != NULL)
+	{
+		args[x] = token;
+		x++;
+		token = strtok(NULL, " \n\t\v");
+	}
+	args[x++] = NULL;
+	return (x);
+}

@@ -18,6 +18,6 @@ void run_nshell(char **cmd, char **env);
 int execute_command(char **token, char *sh, char **env);
 int get_tokens(char *cmd, char **args);
 void free_arr(char **arr);
-char *display_prompt(char **cmd, char *sh);
+ssize_t display_prompt(char **cmd, char *sh);
 
 #endif
